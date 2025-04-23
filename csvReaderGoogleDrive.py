@@ -10,7 +10,7 @@ import csv
 SERVICE_ACCOUNT_FILE = 'first-project-457714-60fa3e8514a5.json'
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/drive.file']
 
-START_ROW=112
+START_ROW=110
 START_ROW = START_ROW - 1
 
 # Authenticate
@@ -41,8 +41,8 @@ workbook = xlwt.Workbook()
 sheet = workbook.add_sheet("Sheet1")
 
 replacement_rows = [
-    ['','','Ground 1','Ground 1','Ground 1','Ground 1','Ground 1','Ground 1','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','','',''],
-    ['','','6:30:00 AM Slot','6:30:00 AM Slot','10:00:00 AM Slot','10:00:00 AM Slot','1:30:00 PM Slot','1:30:00 PM Slot','6:30:00 AM Slot','6:30:00 AM Slot','10:00:00 AM Slot','10:00:00 AM Slot','1:30:00 PM Slot','1:30:00 PM Slot','4:30:00 PM Slot','4:30:00 PM Slot','8:00:00 PM Slot','8:00:00 PM Slot','','']
+    ['','','Ground 1','Ground 1','Ground 1','Ground 1','Ground 1','Ground 1','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2','Ground 2'],
+    ['','','6:30:00 AM Slot','6:30:00 AM Slot','10:00:00 AM Slot','10:00:00 AM Slot','1:30:00 PM Slot','1:30:00 PM Slot','6:30:00 AM Slot','6:30:00 AM Slot','10:00:00 AM Slot','10:00:00 AM Slot','1:30:00 PM Slot','1:30:00 PM Slot','4:30:00 PM Slot','4:30:00 PM Slot','8:00:00 PM Slot','8:00:00 PM Slot']
 ]
 
 
@@ -64,7 +64,7 @@ df = pd.read_csv(file_name, header=[0, 1])
 
 # Initialize a list to store records
 records = []
-records.append([ "Date", "Day", "Ground", "Slot", "Team"])
+records.append([ "Date", "Day", "Ground", "Slot", "Team", "Payment Status"])
 # Loop through each row
 for idx, row in df.iterrows():
 
@@ -77,7 +77,7 @@ for idx, row in df.iterrows():
         h1, h2 = col
         cell_value = row[col]
         if not pd.isna(cell_value) and cell_value != first_col_value and cell_value != second_col_value and not h1.startswith('Unnamed') and not h2.startswith('Unnamed'):
-            records.append([ first_col_value, second_col_value, h1, h2, cell_value])
+            records.append([ first_col_value, second_col_value, h1, h2, cell_value, "PAID" if '_P' in cell_value else 'PENDING'])
 
 # Optional: print all records
 for record in records:
