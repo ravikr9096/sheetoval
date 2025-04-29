@@ -10,9 +10,9 @@ import csv
 SERVICE_ACCOUNT_FILE = 'first-project-457714-60fa3e8514a5.json'
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/drive.file']
 
-START_ROW=108
+START_ROW=77
 START_ROW = START_ROW - 1
-END_ROW=112
+END_ROW=120
 END_ROW = END_ROW - 1
 
 # Authenticate
@@ -66,7 +66,6 @@ df = pd.read_csv(file_name, header=[0, 1])
 
 # Initialize a list to store records
 records = []
-records.append([ "Date", "Day", "Ground", "Slot", "Team", "Payment Status"])
 # Loop through each row
 for idx, row in df.iterrows():
 
@@ -79,28 +78,34 @@ for idx, row in df.iterrows():
         h1, h2 = col
         cell_value = row[col]
         if not pd.isna(cell_value) and cell_value != first_col_value and cell_value != second_col_value and not h1.startswith('Unnamed') and not h2.startswith('Unnamed'):
-            records.append([ first_col_value, second_col_value, h1, h2, cell_value, "PAID" if '_P' in cell_value else 'PENDING'])
+            records.append(cell_value)
 
 # Optional: print all records
+print(records)
+count_dict = {}
 for record in records:
-    print(record)
+    count_dict[record] = count_dict.get(record, 0) + 1
+
+print(count_dict)
 
 # Write data to sheet
-for row_idx, row in enumerate(records):
-    for col_idx, value in enumerate(row):
-        sheet.write(row_idx, col_idx, value)
+sheet.write(0,0,"TeamName")
+sheet.write(0,1, "Matches")
+for row, (key, value) in enumerate(count_dict.items(), start=1):
+    sheet.write(row, 0, key)
+    sheet.write(row, 1, value)
 
 # Save the workbook
-workbook.save("output_file.xlsx")
+workbook.save("uniqueTeamsList.xlsx")
 
 
 #upload output file
 file_metadata = {
-    'name': 'output_file.xlsx',  # Name it will have in Google Drive
+    'name': 'uniqueTeamsList.xlsx',  # Name it will have in Google Drive
     # Optional: add this to upload to a specific folder
     'parents': ['1KkPtctPIJTH7VlZ3jKfFvcIaFm41o9Sh']
 }
-media = MediaFileUpload('output_file.xlsx', mimetype='application/vnd.ms-excel')
+media = MediaFileUpload('uniqueTeamsList.xlsx', mimetype='application/vnd.ms-excel')
 
 # Upload the file
 file = drive_service.files().create(
