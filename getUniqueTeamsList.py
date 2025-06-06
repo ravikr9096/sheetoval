@@ -10,7 +10,7 @@ import csv
 SERVICE_ACCOUNT_FILE = 'first-project-457714-60fa3e8514a5.json'
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/drive.file']
 
-START_ROW=77
+START_ROW=3
 START_ROW = START_ROW - 1
 END_ROW=120
 END_ROW = END_ROW - 1
