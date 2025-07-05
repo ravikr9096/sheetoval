@@ -10,9 +10,9 @@ import csv
 SERVICE_ACCOUNT_FILE = 'first-project-457714-60fa3e8514a5.json'
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/drive.file']
 
-START_ROW=149
+START_ROW=3
 START_ROW = START_ROW - 1
-END_ROW=183
+END_ROW = 126
 END_ROW = END_ROW - 1
 
 # Authenticate
@@ -66,6 +66,7 @@ df = pd.read_csv(file_name, header=[0, 1])
 
 # Initialize a list to store records
 records = []
+records.append([])
 # Loop through each row
 for idx, row in df.iterrows():
 
@@ -78,34 +79,31 @@ for idx, row in df.iterrows():
         h1, h2 = col
         cell_value = row[col]
         if not pd.isna(cell_value) and cell_value != first_col_value and cell_value != second_col_value and not h1.startswith('Unnamed') and not h2.startswith('Unnamed'):
-            records.append(cell_value)
+            records.append([cell_value])
 
 # Optional: print all records
-print(records)
-count_dict = {}
+new_rec = []
 for record in records:
-    count_dict[record] = count_dict.get(record, 0) + 1
-
-print(count_dict)
+    if record not in new_rec:
+        new_rec.append(record)
+    print(new_rec)
 
 # Write data to sheet
-sheet.write(0,0,"TeamName")
-sheet.write(0,1, "Matches")
-for row, (key, value) in enumerate(count_dict.items(), start=1):
-    sheet.write(row, 0, key)
-    sheet.write(row, 1, value)
+for row_idx, row in enumerate(new_rec):
+    for col_idx, value in enumerate(row):
+        sheet.write(row_idx, col_idx, value)
 
 # Save the workbook
-workbook.save("uniqueTeamsList.xlsx")
+workbook.save("uniqueTeams.xlsx")
 
 
 #upload output file
 file_metadata = {
-    'name': 'uniqueTeamsList.xlsx',  # Name it will have in Google Drive
+    'name': 'uniqueTeams.xlsx',  # Name it will have in Google Drive
     # Optional: add this to upload to a specific folder
     'parents': ['1KkPtctPIJTH7VlZ3jKfFvcIaFm41o9Sh']
 }
-media = MediaFileUpload('uniqueTeamsList.xlsx', mimetype='application/vnd.ms-excel')
+media = MediaFileUpload('uniqueTeams.xlsx', mimetype='application/vnd.ms-excel')
 
 # Upload the file
 file = drive_service.files().create(
